@@ -120,8 +120,7 @@ public class FormularioLogin extends JFrame {
                 System.out.println("👤 Usuario: " + userID + " - " + userName + " - " + rol);
 
                 // 📌 Abrir MDIPrincipal y pasar los datos del usuario
-                MDIPrincipal mdi = new MDIPrincipal();
-                mdi.setUsuarioRegistrado(userID, userName, rol);
+                MDIPrincipal mdi = new MDIPrincipal(userID, userName, rol);
                 mdi.setVisible(true);
                 this.dispose();
             } else {
