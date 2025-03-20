@@ -18,17 +18,11 @@ public class MDIPrincipal extends JFrame {
         setContentPane(desktopPane);
 
         // Si se ejecuta sin usuario, mostrar mensaje y abrir login
-        if (userID == null) {
-            JLabel lblMensaje = new JLabel("Bienvenido al Sistema. Inicie sesión.", SwingConstants.CENTER);
-            lblMensaje.setBounds(250, 250, 300, 30);
-            desktopPane.add(lblMensaje);
+      if (userID == null) {
+    // Puedes mostrar un mensaje indicando que debe loguearse
+    JOptionPane.showMessageDialog(this, "Por favor inicie sesión.");
+}
 
-            SwingUtilities.invokeLater(() -> {
-                FormularioLogin login = new FormularioLogin();
-                login.setVisible(true);
-                this.dispose();  // Cerrar la ventana para evitar duplicados
-            });
-        }
     }
 
     public void inicializarMenu() {

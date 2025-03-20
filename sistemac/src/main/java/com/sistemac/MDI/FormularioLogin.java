@@ -9,7 +9,7 @@ import java.net.URL;
 import org.json.JSONObject;
 
 public class FormularioLogin extends JFrame {
-    private JTextField txtUsuario;
+    private JTextField txtCedula;
     private JPasswordField txtClave;
     private JButton btnLogin;
 
@@ -20,13 +20,13 @@ public class FormularioLogin extends JFrame {
         setLocationRelativeTo(null);
         setLayout(null);
 
-        JLabel lblUsuario = new JLabel("Usuario:");
-        lblUsuario.setBounds(20, 20, 100, 20);
-        add(lblUsuario);
+        JLabel lblCedula = new JLabel("Cédula:");
+        lblCedula.setBounds(20, 20, 100, 20);
+        add(lblCedula);
 
-        txtUsuario = new JTextField();
-        txtUsuario.setBounds(100, 20, 150, 20);
-        add(txtUsuario);
+        txtCedula = new JTextField();
+        txtCedula.setBounds(100, 20, 150, 20);
+        add(txtCedula);
 
         JLabel lblClave = new JLabel("Clave:");
         lblClave.setBounds(20, 60, 100, 20);
@@ -48,32 +48,33 @@ public class FormularioLogin extends JFrame {
     }
 
     private void autenticarUsuario() {
-        String usuario = txtUsuario.getText().trim();
+        String cedula = txtCedula.getText().trim();
         String clave = new String(txtClave.getPassword()).trim();
 
-        if (usuario.isEmpty() || clave.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Ingrese usuario y clave", "Error", JOptionPane.ERROR_MESSAGE);
+        if (cedula.isEmpty() || clave.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Ingrese cédula y clave", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
         try {
-            URL url = new URL("http://localhost:3000/api/login"); // Ajustar URL según API
+            URL url = new URL("http://localhost:3000/api/usuarios/login");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "application/json");
             conn.setDoOutput(true);
 
             JSONObject json = new JSONObject();
-            json.put("usuario", usuario);
-            json.put("clave", clave);
+            json.put("cedula", cedula);
+            json.put("password", clave);
 
             OutputStream os = conn.getOutputStream();
             os.write(json.toString().getBytes("UTF-8"));
             os.close();
 
             int responseCode = conn.getResponseCode();
+            BufferedReader br;
             if (responseCode == HttpURLConnection.HTTP_OK) {
-                BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "utf-8"));
+                br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "utf-8"));
                 StringBuilder response = new StringBuilder();
                 String line;
                 while ((line = br.readLine()) != null) {
@@ -82,7 +83,14 @@ public class FormularioLogin extends JFrame {
                 br.close();
                 procesarRespuesta(response.toString());
             } else {
-                JOptionPane.showMessageDialog(this, "Credenciales incorrectas", "Error", JOptionPane.ERROR_MESSAGE);
+                br = new BufferedReader(new InputStreamReader(conn.getErrorStream(), "utf-8"));
+                StringBuilder response = new StringBuilder();
+                String line;
+                while ((line = br.readLine()) != null) {
+                    response.append(line.trim());
+                }
+                br.close();
+                JOptionPane.showMessageDialog(this, "Error: " + response.toString(), "Login fallido", JOptionPane.ERROR_MESSAGE);
             }
             conn.disconnect();
         } catch (Exception ex) {
@@ -92,19 +100,35 @@ public class FormularioLogin extends JFrame {
 
     private void procesarRespuesta(String jsonResponse) {
         try {
+            System.out.println("🔍 Respuesta recibida: " + jsonResponse); // Depuración
+
             JSONObject json = new JSONObject(jsonResponse);
-            int userID = json.getInt("id");
-            String userName = json.getString("nombre");
-            String rol = json.getString("rol");
 
-            JOptionPane.showMessageDialog(this, "Bienvenido " + userName);
+            if (json.has("success") && json.getBoolean("success")) {
+                String mensaje = json.getString("message");
+                String token = json.getString("token");
 
-            MDIPrincipal mdi = new MDIPrincipal();
-            mdi.setUsuarioRegistrado(userID, userName, rol);
-            mdi.setVisible(true);
-            this.dispose();
+                // 📌 Extraer datos del usuario
+                JSONObject user = json.getJSONObject("user");
+                int userID = user.getInt("UserID");
+                String userName = user.getString("UserName");
+                String rol = user.getString("Rol");
+
+                JOptionPane.showMessageDialog(this, mensaje);
+
+                System.out.println("🔑 Token recibido: " + token);
+                System.out.println("👤 Usuario: " + userID + " - " + userName + " - " + rol);
+
+                // 📌 Abrir MDIPrincipal y pasar los datos del usuario
+                MDIPrincipal mdi = new MDIPrincipal();
+                mdi.setUsuarioRegistrado(userID, userName, rol);
+                mdi.setVisible(true);
+                this.dispose();
+            } else {
+                JOptionPane.showMessageDialog(this, "Login fallido", "Error", JOptionPane.ERROR_MESSAGE);
+            }
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Error al procesar la respuesta", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "❌ Error al procesar la respuesta: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
