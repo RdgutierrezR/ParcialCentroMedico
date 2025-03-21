@@ -1,6 +1,7 @@
 package com.sistemac.MDI;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
@@ -12,10 +13,11 @@ public class FormularioLogin extends JFrame {
     private JTextField txtCedula;
     private JPasswordField txtClave;
     private JButton btnLogin;
+    private JButton btnRegistro; // Botón de registro
 
     public FormularioLogin() {
         setTitle("Inicio de Sesión");
-        setSize(300, 200);
+        setSize(300, 250); // Ajusta el tamaño para el nuevo botón
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(null);
@@ -40,9 +42,22 @@ public class FormularioLogin extends JFrame {
         btnLogin.setBounds(100, 100, 100, 30);
         add(btnLogin);
 
+        // Botón de registro
+        btnRegistro = new JButton("registro");
+        btnRegistro.setBounds(100, 140, 100, 30); // Posición debajo del botón de login
+        add(btnRegistro);
+
         btnLogin.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 autenticarUsuario();
+            }
+        });
+
+        // ActionListener para abrir el formulario de registro
+        btnRegistro.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                // Abre el formulario de registro
+                abrirFormularioRegistro();
             }
         });
     }
@@ -133,6 +148,12 @@ public class FormularioLogin extends JFrame {
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "❌ Error al procesar la respuesta: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
+    }
+
+    private void abrirFormularioRegistro() {
+        // Crea una instancia del formulario de registro
+        FormularioRegistroUsuario registroForm = new FormularioRegistroUsuario(null); // Pasa null como MDIPrincipal
+        registroForm.setVisible(true);
     }
 
     public static void main(String[] args) {
