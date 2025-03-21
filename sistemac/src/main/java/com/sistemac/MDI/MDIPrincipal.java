@@ -34,13 +34,25 @@ public class MDIPrincipal extends JFrame {
         JMenu menu = new JMenu("Opciones");
 
         JMenuItem itemSalir = new JMenuItem("Salir");
-        itemSalir.addActionListener(e -> System.exit(0));
+        itemSalir.addActionListener(e -> {
+            int respuesta = JOptionPane.showConfirmDialog(
+                this, 
+                "¿Está seguro de que desea salir?", 
+                "Confirmar salida", 
+                JOptionPane.YES_NO_OPTION, 
+                JOptionPane.WARNING_MESSAGE
+            );
+
+            if (respuesta == JOptionPane.YES_OPTION) {
+                System.exit(0);
+            }
+        });
 
         if ("Paciente".equalsIgnoreCase(rolUsuario)) {
             JMenuItem itemReglas = new JMenuItem("Sistema de Reglas");
             JMenuItem itemHistorial = new JMenuItem("Historial");
 
-            itemReglas.addActionListener(e -> abrirFormulario(new FormularioSistemaReglas(userID)));
+            itemReglas.addActionListener(e -> abrirFormulario(new FormularioSistemaReglas(userID, userName)));
             itemHistorial.addActionListener(e -> abrirFormulario(new FormularioHistorial(userID)));
 
             menu.add(itemReglas);
@@ -50,7 +62,7 @@ public class MDIPrincipal extends JFrame {
             JMenuItem itemSeguimiento = new JMenuItem("Seguimiento");
             JMenuItem itemReportes = new JMenuItem("Generar Reportes");
 
-            itemReglas.addActionListener(e -> abrirFormulario(new FormularioSistemaReglas(userID)));
+            itemReglas.addActionListener(e -> abrirFormulario(new FormularioSistemaReglas(userID, userName)));
             itemSeguimiento.addActionListener(e -> abrirFormulario(new FormularioSeguimiento()));
             itemReportes.addActionListener(e -> abrirFormulario(new FormularioReportes()));
 

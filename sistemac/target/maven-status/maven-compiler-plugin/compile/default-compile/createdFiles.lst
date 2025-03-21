@@ -11,10 +11,11 @@ com/sistemac/MDI/FormularioRegistroUsuario$1.class
 com/sistemac/MDI/FormularioLogin.class
 com/sistemac/MDI/MDIPrincipal.class
 com/sistemac/MDI/FormularioSistemaReglas.class
-com/sistemac/MDI/FormularioHistorial.class
 com/sistemac/Diagnosticos.class
+com/sistemac/MDI/FormularioHistorial.class
 com/sistemac/MDI/FormularioBuscarUsuario$2.class
 com/sistemac/MDI/FormularioRegistroUsuario.class
+com/sistemac/MDI/FormularioSeguimiento$MiRenderizador.class
 com/sistemac/MDI/FormularioLogin$1.class
 com/sistemac/MDI/FormularioVerDiagnosticos$1.class
 com/sistemac/MDI/FormularioSistemaReglas$1.class

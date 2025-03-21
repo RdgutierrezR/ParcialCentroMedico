@@ -1,6 +1,7 @@
 package com.sistemac.MDI;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -41,6 +42,13 @@ public class FormularioSeguimiento extends JInternalFrame {
         String[] columnas = {"HistorialID", "DiagnosticoID", "Fecha", "Descripcion"};
         tableModel = new DefaultTableModel(columnas, 0);
         tableHistorial = new JTable(tableModel);
+        
+        // Configurar renderizador personalizado
+        tableHistorial.setDefaultRenderer(Object.class, new MiRenderizador());
+        
+        // Configurar ancho de columnas
+        tableHistorial.getColumnModel().getColumn(3).setPreferredWidth(300);  // Ancho para la descripción
+        
         add(new JScrollPane(tableHistorial), BorderLayout.CENTER);
 
         // Acción del botón
@@ -102,6 +110,9 @@ public class FormularioSeguimiento extends JInternalFrame {
                 tableModel.addRow(new Object[]{historialID, diagnosticoID, fecha, descripcion});
             }
 
+            // Ajustar altura de filas dinámicamente
+            ajustarAlturaFilas();
+
             // Si no hay registros, mostrar mensaje
             if (tableModel.getRowCount() == 0) {
                 JOptionPane.showMessageDialog(this, "No hay historiales para este usuario.", "Información", JOptionPane.INFORMATION_MESSAGE);
@@ -109,6 +120,47 @@ public class FormularioSeguimiento extends JInternalFrame {
 
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Error al obtener datos: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    // Clase personalizada para renderizar celdas
+    private class MiRenderizador extends DefaultTableCellRenderer {
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            
+            if (column == 3) {
+                JTextArea textArea = new JTextArea(value.toString());
+                textArea.setLineWrap(true);
+                textArea.setWrapStyleWord(true);
+                textArea.setSize(table.getColumnModel().getColumn(column).getWidth(), Short.MAX_VALUE);
+                
+                // Ajustar altura de la fila
+                int height = textArea.getPreferredSize().height + 10;
+                table.setRowHeight(row, Math.max(height, table.getRowHeight()));
+                
+                // Tooltip si el texto es muy largo
+                if (value.toString().length() > 150) {
+                    textArea.setToolTipText(value.toString());
+                }
+                
+                return new JScrollPane(textArea);
+            }
+            return c;
+        }
+    }
+
+    // Método para ajustar la altura de las filas
+    private void ajustarAlturaFilas() {
+        for (int row = 0; row < tableHistorial.getRowCount(); row++) {
+            int rowHeight = tableHistorial.getRowHeight();
+            
+            for (int column = 0; column < tableHistorial.getColumnCount(); column++) {
+                Component comp = tableHistorial.prepareRenderer(tableHistorial.getCellRenderer(row, column), row, column);
+                rowHeight = Math.max(rowHeight, comp.getPreferredSize().height);
+            }
+            
+            tableHistorial.setRowHeight(row, rowHeight + 10);  // Margen adicional
         }
     }
 }

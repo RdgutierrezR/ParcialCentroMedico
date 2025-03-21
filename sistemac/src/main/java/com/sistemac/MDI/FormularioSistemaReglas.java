@@ -10,21 +10,23 @@ public class FormularioSistemaReglas extends JInternalFrame {
     private JButton btnEnviar;
     private JTextArea txtDiagnostico; // Se reemplazó JLabel por JTextArea
     private int userID;
+    private String userName;
 
     // Constructor vacío agregado para evitar errores
     public FormularioSistemaReglas() {
-        this(0); // Asigna un ID predeterminado
+        this(0, ""); // Asigna un ID predeterminado
     }
 
-    public FormularioSistemaReglas(int userID) {
+    public FormularioSistemaReglas(int userID, String userName) {
         this.userID = userID;
+        this.userName = userName;
         setTitle("Sistema de Reglas");
         setSize(500, 400);
         setClosable(true);
         setIconifiable(true);
         setLayout(null);
 
-        JLabel lblUser = new JLabel("Usuario ID: " + userID);
+        JLabel lblUser = new JLabel("Usuario: " + userName);
         lblUser.setBounds(20, 20, 300, 20);
         add(lblUser);
 
@@ -99,6 +101,6 @@ public class FormularioSistemaReglas extends JInternalFrame {
         String diagnosticoFinal = Diagnosticos.evaluarDiagnostico(userID, p1, p2, p3, p4, p5);
         
         // Mostrar el resultado en la interfaz
-        txtDiagnostico.setText("Diagnóstico: " + diagnosticoFinal);
+        txtDiagnostico.setText(diagnosticoFinal);
     }
 }
