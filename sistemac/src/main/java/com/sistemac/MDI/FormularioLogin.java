@@ -114,13 +114,17 @@ public class FormularioLogin extends JFrame {
                 String userName = user.getString("UserName");
                 String rol = user.getString("Rol");
 
+                // 📌 Guardar datos del usuario en SesionUsuario
+                SesionUsuario.getInstancia().setDatosUsuario(userID, userName, rol);
+
                 JOptionPane.showMessageDialog(this, mensaje);
 
                 System.out.println("🔑 Token recibido: " + token);
                 System.out.println("👤 Usuario: " + userID + " - " + userName + " - " + rol);
 
                 // 📌 Abrir MDIPrincipal y pasar los datos del usuario
-                MDIPrincipal mdi = new MDIPrincipal(userID, userName, rol);
+                MDIPrincipal mdi = new MDIPrincipal(userID, userName, rol); // ✅ Pasando los parámetros correctos
+
                 mdi.setVisible(true);
                 this.dispose();
             } else {

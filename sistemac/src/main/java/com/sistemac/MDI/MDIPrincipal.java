@@ -41,7 +41,7 @@ public class MDIPrincipal extends JFrame {
             JMenuItem itemHistorial = new JMenuItem("Historial");
 
             itemReglas.addActionListener(e -> abrirFormulario(new FormularioSistemaReglas(userID)));
-            itemHistorial.addActionListener(e -> abrirFormulario(new FormularioHistorial()));
+            itemHistorial.addActionListener(e -> abrirFormulario(new FormularioHistorial(userID)));
 
             menu.add(itemReglas);
             menu.add(itemHistorial);
